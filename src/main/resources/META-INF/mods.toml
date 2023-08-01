@@ -1,0 +1,26 @@
+modLoader = "javafml"
+loaderVersion = "[43,)"
+license = "All rights reserved"
+#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+
+[[mods]]
+modId = "rideable_zombie_horses" #mandatory
+version = "1.19.2-1.0.0"
+displayName = "Rideable Zombie Horses"
+credits = "Programmed by Cozary & Art by Zenokim"
+authors = "precisemodpacker"
+description = '''Allow players to ride Zombie Horses'''
+
+[[dependencies.rideable_zombie_horses]]
+modId = "forge"
+mandatory = true
+versionRange = "[43,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.rideable_zombie_horses]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19.2,1.20)"
+ordering = "NONE"
+side = "BOTH"

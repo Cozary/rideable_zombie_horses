@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.cozary.rideable_zombie_horses.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "rideable_zombie_horses.refmap.json",
+  "mixins": [
+    "ZombieHorseMixin"
+  ],
+  "client": [
+  ],
+  "minVersion": "0.8"
+}

@@ -1,0 +1,90 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7+'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+repositories {
+
+}
+
+version = "${minecraft_version}-${mod_version}" + getBuildNumber()
+group = 'com.cozary.rideable_zombie_horses'
+archivesBaseName = 'Rideable Zombie Horses'
+
+mixin {
+    add sourceSets.main, "rideable_zombie_horses.refmap.json"
+    config 'rideable_zombie_horses.mixins.json'
+}
+
+minecraft {
+
+    mappings channel: 'official', version: "${minecraft_version}"
+
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            arg "-mixin.config=rideable_zombie_horses.mixins.json"
+            workingDirectory project.file('run')
+            mods {
+                rideable_zombie_horses {
+                    source sourceSets.main
+                }
+            }
+        }
+        server {
+            workingDirectory project.file('run')
+            arg "-mixin.config=rideable_zombie_horses.mixins.json"
+            mods {
+                rideable_zombie_horses {
+                    source sourceSets.main
+                }
+            }
+        }
+        data {
+            workingDirectory project.file('run')
+            args '--mod', 'rideable_zombie_horses', '--all', '--output', file("src/generated/resources/"), '--existing', file("src/main/resources/")
+            mods {
+                rideable_zombie_horses {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+dependencies {
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+}
+
+jar.finalizedBy('reobfJar')
+
+task apiJar(type: Jar) {
+    from sourceSets.main.allSource
+    from sourceSets.main.output
+    classifier = 'api'
+}
+
+
+String getBuildNumber() {
+    return System.getenv('BUILD_NUMBER') ? ".jenkins" + System.getenv('BUILD_NUMBER') : "";
+}
